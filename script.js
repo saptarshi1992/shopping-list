@@ -22,6 +22,7 @@ function addItem(e) {
     li.appendChild(button);
     getItemList.appendChild(li);
     newItem.value = '';
+    checkUI()
 }
 function createButton(classes) {
     const button = document.createElement('button');
@@ -37,7 +38,10 @@ function createIcon(classes) {
 }
 function removeItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
-        e.target.parentElement.parentElement.remove();
+        if (confirm('Are You Sure?')) {
+            e.target.parentElement.parentElement.remove();
+            checkUI();
+        }
     }
 
 }
@@ -45,21 +49,40 @@ function clearItem(e) {
     while (getItemList.firstChild) {
         getItemList.removeChild(getItemList.firstChild);
     }
+    checkUI();
 
 }
+
+function filterItem(e) {
+    const items = getItemList.querySelectorAll('li');
+    const text = e.target.value.toLowerCase();
+    items.forEach(item => {
+        const itemName = item.firstChild.textContent.toLowerCase();
+        if (itemName.indexOf(text) != -1) {
+            item.style.display = 'flex';
+        }
+        else {
+            item.style.display = 'none';
+        }
+        
+   })
+}
 function checkUI() {
+    const item = getItemList.querySelectorAll('li');
+    console.log(item);
     if (item.length === 0) {
         itemClear.style.display = 'none';
         itemFilter.style.display = 'none';
     }
     else {
-        itemClear.style.display = 'none';
-        itemFilter.style.display = 'none';
+        itemClear.style.display = 'block';
+        itemFilter.style.display = 'block';
     }
 }
 getItemForm.addEventListener('submit', addItem);
 getItemList.addEventListener('click', removeItem);
 itemClear.addEventListener('click', clearItem);
+itemFilter.addEventListener('input',filterItem)
 
 
 checkUI();
