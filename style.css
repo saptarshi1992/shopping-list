@@ -27,7 +27,9 @@ header h1 {
   font-weight: 300;
   margin-left: 10px;
 }
-
+.edit-mode{
+  color:#ccc;
+}
 .container {
   max-width: 500px;
   margin: 30px auto;
