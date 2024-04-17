@@ -13,8 +13,7 @@
     <link rel="stylesheet" href="style.css" />
     <title>Shopping List</title>
     <!--Login Using Google-->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script>
       let auth2;
 
@@ -22,7 +21,7 @@
       function initGoogleAuth() {
         gapi.load('auth2', function () {
           auth2 = gapi.auth2.init({
-            client_id: '824887890981-q3ich9j2ju58v4p31bkts1313fimu9m4.apps.googleusercontent.com'
+            client_id: '712489402153-eiaqrd5vhlvapad8jvkenalv35s30m2g.apps.googleusercontent.com'
           });
         });
       }
