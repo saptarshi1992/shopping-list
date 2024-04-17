@@ -12,14 +12,46 @@
       crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css" />
     <title>Shopping List</title>
+    <!--Login Using Google-->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script>
+      let auth2;
+
+      // Load Google API and initialize the GoogleAuth instance
+      function initGoogleAuth() {
+        gapi.load('auth2', function () {
+          auth2 = gapi.auth2.init({
+            client_id: '824887890981-q3ich9j2ju58v4p31bkts1313fimu9m4.apps.googleusercontent.com'
+          });
+        });
+      }
+
       function onSignIn(googleUser) {
+        // Get the profile information
         var profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+        document.getElementById('user-info').innerHTML = `
+        <p>ID: ${profile.getId()}</p>
+        <p>Name: ${profile.getName()}</p>
+        <p>Email: ${profile.getEmail()}</p>
+        <img src="${profile.getImageUrl()}" alt="${profile.getName()}" />
+    `;
+
+        // Change the sign-in button to a sign-out button
+        document.querySelector('.g-signin2').style.display = 'none';
+        document.getElementById('sign-out-btn').style.display = 'block';
+      }
+
+      function signOut() {
+        auth2.signOut().then(function () {
+          console.log('User signed out.');
+          document.getElementById('user-info').innerHTML = '';
+          document.querySelector('.g-signin2').style.display = 'block';
+          document.getElementById('sign-out-btn').style.display = 'none';
+        });
+      }
+
+      window.onload = function () {
+        initGoogleAuth();
       }
 
     </script>
@@ -27,6 +59,8 @@
 
   <body>
     <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <button id="sign-out-btn" style="display: none;" onclick="signOut()">Sign Out</button>
+    <div id="user-info"></div>
     <div class="container">
       <header>
         <img src="images/note.png" alt="" />
