@@ -33,6 +33,20 @@
             <p>Email: ${payload.email}</p>
             <img src="${payload.picture}" alt="User Picture">
         `;
+        document.getElementById('sign-in-button').style.display = 'none';
+        document.getElementById('sign-out-button').style.display = 'inline-block';
+      }
+      function handleSignOut() {
+        // Perform sign-out using the Google Sign-In client
+        google.accounts.id.disableAutoSelect();
+        google.accounts.id.revoke(localStorage.getItem('gsi_user_email'), () => {
+          // Clear user information
+          document.getElementById('user-info').innerHTML = '';
+
+          // Show the sign-in button and hide the sign-out button
+          document.getElementById('sign-in-button').style.display = 'block';
+          document.getElementById('sign-out-button').style.display = 'none';
+        });
       }
       function parseJwt(token) {
         const base64Url = token.split('.')[1];
@@ -65,7 +79,10 @@
 
     <div class="container">
       <div id="sign-in-button" class="right-aligned"></div>
+      <button id="sign-out-button" style="display: none;" onclick="handleSignOut()">Sign Out</button>
+
       <div id="user-info" class="right-aligned"></div>
+
       <header>
         <img src="images/note.png" alt="" />
         <h1>Shopping List</h1>
