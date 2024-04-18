@@ -5,67 +5,121 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Google Sign-In Example</title>
-        <!-- Include the Google Sign-In library -->
-        <script src="https://accounts.google.com/gsi/client" onload="console.log('TODO: add onload function')"></script>
+        <title>Google Sign-Up and Sign-In Example</title>
+        <!-- Include the Google Identity Services library -->
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
         <script>
-            // Callback function to handle the sign-in process
-            function handleCredentialResponse(response) {
-                // Parse the credential response
-                const idToken = response.credential;
-
-                // Verify the ID token and get the user information
-                // For simplicity, let's decode the token without actual verification
-                const payload = parseJwt(idToken);
-
-                // Display user information
-                const userInfoDiv = document.getElementById('user-info');
-                userInfoDiv.innerHTML = `
-                <h2>User Information</h2>
-                <p>Name: ${payload.name}</p>
-                <p>Email: ${payload.email}</p>
-                <img src="${payload.picture}" alt="User Picture">
-            `;
-            }
-
-            // Function to decode the ID token (for demonstration purposes)
-            function parseJwt(token) {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-
-                return JSON.parse(jsonPayload);
-            }
-
-            window.onload = function () {
-                // Initialize the Google Sign-In client
+            // Initialize Google Identity Services client
+            function initializeGoogleSignIn() {
                 google.accounts.id.initialize({
-                    client_id: '712489402153-eiaqrd5vhlvapad8jvkenalv35s30m2g.apps.googleusercontent.com', // Replace with your client ID
-                    callback: handleCredentialResponse
+                    client_id: 'YOUR_CLIENT_ID', // Replace with your Google client ID
+                    callback: handleGoogleSignIn
                 });
 
                 // Render the Google Sign-In button
                 google.accounts.id.renderButton(
-                    document.getElementById('sign-in-button'),
+                    document.getElementById('google-sign-in-button'),
                     {
                         theme: 'outline',
                         size: 'large'
                     }
                 );
+            }
+
+            // Handle Google Sign-In response
+            function handleGoogleSignIn(response) {
+                const idToken = response.credential;
+
+                // Send the ID token to your server for verification and sign-up/sign-in
+                fetch('/api/google-auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ idToken })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Handle successful sign-up/sign-in
+                            handleAuthSuccess(data);
+                        } else {
+                            // Handle sign-up/sign-in failure
+                            handleAuthFailure(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+
+            // Function to handle successful authentication
+            function handleAuthSuccess(data) {
+                // Display user information
+                const userInfoDiv = document.getElementById('user-info');
+                userInfoDiv.innerHTML = `
+                <h2>Welcome, ${data.name}!</h2>
+                <p>Email: ${data.email}</p>
+            `;
+
+                // Hide the Google Sign-In button and show a sign-out button
+                document.getElementById('google-sign-in-button').style.display = 'none';
+                document.getElementById('sign-out-button').style.display = 'inline-block';
+            }
+
+            // Function to handle authentication failure
+            function handleAuthFailure(message) {
+                const errorDiv = document.getElementById('error-message');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+
+            // Function to handle user sign-out
+            function handleSignOut() {
+                // Perform sign-out operations
+                fetch('/api/sign-out', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(() => {
+                        // Clear user information
+                        document.getElementById('user-info').innerHTML = '';
+
+                        // Show the Google Sign-In button and hide the sign-out button
+                        document.getElementById('google-sign-in-button').style.display = 'block';
+                        document.getElementById('sign-out-button').style.display = 'none';
+                    })
+                    .catch(error => {
+                        console.error('Sign-out error:', error);
+                    });
+            }
+
+            // Initialize Google Identity Services when the page loads
+            window.onload = function () {
+                initializeGoogleSignIn();
+
+                // Attach event listener to the sign-out button
+                document.getElementById('sign-out-button').addEventListener('click', handleSignOut);
             };
         </script>
     </head>
 
     <body>
-        <h1>Google Sign-In Example</h1>
+        <h1>Google Sign-Up and Sign-In Example</h1>
 
         <!-- Google Sign-In button -->
-        <div id="sign-in-button"></div>
+        <div id="google-sign-in-button"></div>
 
-        <!-- Div to display user information -->
+        <!-- Sign-out button (initially hidden) -->
+        <button id="sign-out-button" style="display: none;">Sign Out</button>
+
+        <!-- User information display -->
         <div id="user-info"></div>
+
+        <!-- Error message display -->
+        <div id="error-message" style="display: none; color: red;"></div>
     </body>
 
 </html>
