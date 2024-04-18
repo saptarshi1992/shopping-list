@@ -1,71 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Google Sign-In Example</title>
-        <!-- Include the Google Sign-In library -->
-        <script src="https://accounts.google.com/gsi/client" onload="console.log('TODO: add onload function')"></script>
-        <script>
-            // Callback function to handle the sign-in process
-            function handleCredentialResponse(response) {
-                // Parse the credential response
-                const idToken = response.credential;
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-signin-client_id"
+      content="712489402153-eiaqrd5vhlvapad8jvkenalv35s30m2g.apps.googleusercontent.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
+      integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Shopping List</title>
 
-                // Verify the ID token and get the user information
-                // For simplicity, let's decode the token without actual verification
-                const payload = parseJwt(idToken);
+    <!--Login Using Google-->
+    <script src="https://accounts.google.com/gsi/client" onload="console.log('TODO: add onload function')"></script>
+    <script>
+      // Callback function to handle the sign-in process
+      function handleCredentialResponse(response) {
+        // Parse the credential response
+        const idToken = response.credential;
 
-                // Display user information
-                const userInfoDiv = document.getElementById('user-info');
-                userInfoDiv.innerHTML = `
-                <h2>User Information</h2>
-                <p>Name: ${payload.name}</p>
-                <p>Email: ${payload.email}</p>
-                <img src="${payload.picture}" alt="User Picture">
-            `;
-            }
+        // Verify the ID token and get the user information
+        // For simplicity, let's decode the token without actual verification
+        const payload = parseJwt(idToken);
 
-            // Function to decode the ID token (for demonstration purposes)
-            function parseJwt(token) {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
+        // Display user information
+        const userInfoDiv = document.getElementById('user-info');
+        userInfoDiv.innerHTML = `
+            <h2>User Information</h2>
+            <p>Name: ${payload.name}</p>
+            <p>Email: ${payload.email}</p>
+            <img src="${payload.picture}" alt="User Picture">
+        `;
+      }
+      function parseJwt(token) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
 
-                return JSON.parse(jsonPayload);
-            }
+        return JSON.parse(jsonPayload);
+      }
 
-            window.onload = function () {
-                // Initialize the Google Sign-In client
-                google.accounts.id.initialize({
-                    client_id: '712489402153-eiaqrd5vhlvapad8jvkenalv35s30m2g.apps.googleusercontent.com', // Replace with your client ID
-                    callback: handleCredentialResponse
-                });
+      window.onload = function () {
+        // Initialize the Google Sign-In client
+        google.accounts.id.initialize({
+          client_id: '712489402153-eiaqrd5vhlvapad8jvkenalv35s30m2g.apps.googleusercontent.com',
+          callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+          document.getElementById('sign-in-button'),
+          {
+            theme: 'outline',
+            size: 'large'
+          }
+        );
+      };
+    </script>
+  </head>
 
-                // Render the Google Sign-In button
-                google.accounts.id.renderButton(
-                    document.getElementById('sign-in-button'),
-                    {
-                        theme: 'outline',
-                        size: 'large'
-                    }
-                );
-            };
-        </script>
-    </head>
+  <body>
 
-    <body>
-        <h1>Google Sign-In Example</h1>
+    <div class="container">
+      <div id="sign-in-button" class="right-aligned"></div>
+      <div id="user-info" class="right-aligned"></div>
+      <header>
+        <img src="images/note.png" alt="" />
+        <h1>Shopping List</h1>
+      </header>
+      <form id="item-form">
+        <div class="form-control">
+          <input type="text" class="form-input" id="item-input" name="item" placeholder="Enter Item" />
+        </div>
+        <div class="form-control">
+          <button type="submit" class="btn">
+            <i class="fa-solid fa-plus"></i> Add Item
+          </button>
+        </div>
+      </form>
 
-        <!-- Google Sign-In button -->
-        <div id="sign-in-button"></div>
+      <div class="filter">
+        <input type="text" class="form-input-filter" id="filter" placeholder="Filter Items" />
+      </div>
 
-        <!-- Div to display user information -->
-        <div id="user-info"></div>
-    </body>
+      <ul id="item-list" class="items">
+        <!-- <li>
+        
+          Apples
+          <button class="remove-item btn-link text-red">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </li>
+        <li> 
+          Orange Juice
+          <button class="remove-item btn-link text-red">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </li>
+        <li>
+          Oreos
+          <button class="remove-item btn-link text-red">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </li>
+        <li>
+          Milk
+          <button class="remove-item btn-link text-red">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </li>!-->
+      </ul>
+
+      <button id="clear" class="btn-clear">Clear All</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
 
 </html>
