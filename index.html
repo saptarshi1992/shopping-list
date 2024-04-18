@@ -13,9 +13,9 @@
     <link rel="stylesheet" href="style.css" />
     <title>Shopping List</title>
     <!--Login Using Google-->
-    <!--<script src="https://apis.google.com/js/platform.js" async defer></script>-->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script>
+    <script src="https://accounts.google.com/gsi/client" onload="console.log('TODO: add onload function')">
+    </script>
+    <!-- <script>
       let auth2;
 
       // Load Google API and initialize the GoogleAuth instance
@@ -55,12 +55,20 @@
         initGoogleAuth();
       }
 
-    </script>
+    </script>-->
   </head>
 
   <body>
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-    <button id="sign-out-btn" style="display: none;" onclick="signOut()">Sign Out</button>
+    <!--<div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <button id="sign-out-btn" style="display: none;" onclick="signOut()">Sign Out</button>-->
+    <div id="g_id_onload" data-client_id="712489402153-eiaqrd5vhlvapad8jvkenalv35s30m2g.apps.googleusercontent.com"
+      data-context="signin" data-ux_mode="popup" data-login_uri="https://wondrous-sopapillas-64a9a3.netlify.app"
+      data-itp_support="true">
+    </div>
+
+    <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with"
+      data-size="large" data-logo_alignment="left">
+    </div>
     <div id="user-info"></div>
     <div class="container">
       <header>
