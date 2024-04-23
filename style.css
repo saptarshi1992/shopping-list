@@ -27,16 +27,23 @@ header h1 {
   font-weight: 300;
   margin-left: 10px;
 }
-.edit-mode{
-  color:#ccc;
+
+.edit-mode {
+  color: #ccc;
 }
+
 .container {
   max-width: 500px;
   margin: 30px auto;
   padding: 20px;
 }
+
 .right-aligned {
   float: right;
+}
+
+.small {
+  font-size: 0.8em;
 }
 
 /* Form & Input */
